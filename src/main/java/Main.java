@@ -17,8 +17,6 @@ public class Main {
     public static void main(String[] args) throws IOException, ParseException {
         Metro metro = createMetro();
         String jsonObject = createJson(metro);
-        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-//        String path = reader.readLine();
         String path = "data/metro.json";
         saveJSON(jsonObject, path);
         printStationsForLines(path);
@@ -49,7 +47,6 @@ public class Main {
         try(FileWriter writer = new FileWriter(path)) {
             writer.write(jsonObject);
             writer.flush();
-            writer.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -109,15 +106,18 @@ public class Main {
             if (cols.size() == 0) {
                 continue;
             }
-            Station station = new Station();
-            String numberLine = cols.get(0).text().split(" ")[0];
-            numberLine = numberLine.length() <= 2
-                    ? numberLine
-                    : numberLine.substring(0,numberLine.length() - 2);
-            station.setNumberLine(numberLine);
-            station.setName(cols.get(1).text());
-            station.setTransfers(cols.get(3).text().split(" "));
-            stations.add(station);
+
+            String[] numberLines = cols.get(0).text().split(" ");
+            for (String numberLine : numberLines) {
+                Station station = new Station();
+                numberLine = numberLine.length() <= 2
+                        ? numberLine
+                        : numberLine.substring(0,numberLine.length() - 2);
+                station.setNumberLine(numberLine);
+                station.setName(cols.get(1).text());
+                station.setTransfers(cols.get(3).text().split(" "));
+                stations.add(station);
+            }
         }
         return stations;
     }
